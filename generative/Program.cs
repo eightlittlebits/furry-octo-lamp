@@ -24,7 +24,9 @@ namespace generative
 
                 var p = new Pen(Color.FromArgb(13, 255, 255, 255));
 
-                var random = new Random();
+                var seed = Environment.TickCount;
+                var random = new Random(seed);
+
                 var points = Enumerable.Range(0, pointCount).Select(i => new PointF((float)random.NextDouble() * width, (float)random.NextDouble() * height)).ToArray();
 
                 for (int it = 0; it < iterations; it++)
@@ -40,6 +42,9 @@ namespace generative
                         g.DrawCircle(p, x0, y0, d);
                     }
                 }
+
+                var f = new Font("Calibri", 16);
+                g.DrawString($"Seed: {seed}", f, Brushes.White, 10, 10);
             }
 
             bitmap.Save("out.png", ImageFormat.Png);
