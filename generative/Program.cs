@@ -10,12 +10,16 @@ namespace generative
     {
         static void Main(string[] args)
         {
+            Options options = CommandLine.ParseCommandLine<Options>(args);
+
             int width = 1600;
             int height = 1200;
             int pointCount = 24;
             int iterations = 2000;
 
             var bitmap = new Bitmap(width, height);
+
+            var seed = options.Seed != 0 ? options.Seed : Environment.TickCount;
 
             using (var g = Graphics.FromImage(bitmap))
             {
@@ -24,7 +28,6 @@ namespace generative
 
                 var p = new Pen(Color.FromArgb(13, 255, 255, 255));
 
-                var seed = Environment.TickCount;
                 var random = new Random(seed);
 
                 var points = Enumerable.Range(0, pointCount).Select(i => new PointF((float)random.NextDouble() * width, (float)random.NextDouble() * height)).ToArray();
@@ -43,11 +46,14 @@ namespace generative
                     }
                 }
 
-                var f = new Font("Calibri", 16);
-                g.DrawString($"Seed: {seed}", f, Brushes.White, 10, 10);
+                if (!options.HideSeed)
+                {
+                    var f = new Font("Calibri", 16);
+                    g.DrawString($"Seed: {seed}", f, Brushes.White, 10, 10); 
+                }
             }
 
-            bitmap.Save("out.png", ImageFormat.Png);
+            bitmap.Save($"{seed}.png", ImageFormat.Png);
         }
     }
 
